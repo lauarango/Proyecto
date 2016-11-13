@@ -13,6 +13,7 @@ sc=canvas.create_polygon(332,34,332,59,358,59,358,34,fill="peachpuff")
 #slipice=canvas.create_polygon()
 #figtherfly=canvas.create.polygon()
 
+"""Interfaz grafica"""
 def tubos():
     #tubo izquierdo abajo
     cuadrado = canvas.create_polygon(0,369,0,430,80,430,80,369,fill="green")
@@ -100,34 +101,60 @@ tubos()
 
 
 #x=canvas.find_overlapping(x1, y1, x2, y2)
+"""Estados de los enemigos """
+sc_Estado=False  #No volteada tortuga1
+sc_morir=False #No muerta tortuga1
+sc2_Estado=False #No volteada tortuga2
+sc2_morir=False #No muerta tortuga2
 
-sc_Estado=False  #No volteado tortuga
-sc_morir=False #No muerta tortuga
 
-#Movimiento de los enemigos
+"""Movimiento de los enemigos"""
 def shellcreeper():
     global sc, sc_Estado, sc_morir
     #caidas
     if sc_Estado==False and canvas.coords(sc)[3]<136 or ((canvas.coords(sc)[4]<306 and canvas.coords(sc)[2]>194) and canvas.coords(sc)[3]<236) or ((canvas.coords(sc)[2]>60 and canvas.coords(sc)[4]<130) and canvas.coords(sc)[3]<336) or ((canvas.coords(sc)[4]<320 and canvas.coords(sc)[2]>180)and canvas.coords(sc)[3]<434 and canvas.coords(sc)[3]>=336):
+        #print(canvas.coords(sc))
         canvas.move(sc,0,5)
         canvas.update()
         m.after(40,shellcreeper)
         return None
     
     #avanzar
-    if sc_Estado==False and not sc_morir:
+    if sc_Estado==False and sc_morir==False:
         canvas.move(sc,-5,0)
     #pantalla continua
-    if sc_Estado==False and not sc_morir and canvas.coords(sc)[0]<0:
+    if sc_Estado==False and sc_morir==False and canvas.coords(sc)[0]<0:
         canvas.move(sc, 500,0)
     #Meterse en las tuberias
-    if sc_Estado==False and not sc_morir and canvas.coords(sc)[2]<=80 and canvas.coords(sc)[3]>360:
+    if sc_Estado==False and sc_morir==False and canvas.coords(sc)[2]<=80 and canvas.coords(sc)[3]>360:
         canvas.delete(sc)
         sc=canvas.create_polygon(332,34,332,59,358,59,358,34,fill="peachpuff")
-##    if sc_Estado==True:
-###       time.sleep( 5 )
-##        sc_Estado=False
     m.after(100,shellcreeper) #Recursion
+
+
+def shellcreeper2():
+    global sc2_Estado, sc2_morir
+    sc2=canvas.create_polygon(332,34,332,59,358,59,358,34,fill="peachpuff")
+    #caidas
+    if sc2_Estado==False and canvas.coords(sc2)[3]<136 or ((canvas.coords(sc2)[4]<306 and canvas.coords(sc2)[2]>194) and canvas.coords(sc2)[3]<236) or ((canvas.coords(sc2)[2]>60 and canvas.coords(sc2)[4]<130) and canvas.coords(sc2)[3]<336) or ((canvas.coords(sc2)[4]<320 and canvas.coords(sc2)[2]>180)and canvas.coords(sc2)[3]<434 and canvas.coords(sc2)[3]>=336):
+        
+        canvas.move(sc2,0,5)
+        canvas.update()
+        m.after(40,shellcreeper2)
+        return None
+    
+    #avanzar
+    if sc2_Estado==False and sc2_morir==False:
+        canvas.move(sc2,-5,0)
+    #pantalla continua
+    if sc2_Estado==False and sc2_morir==False and canvas.coords(sc2)[0]<0:
+        canvas.move(sc2, 500,0)
+    #Meterse en las tuberias
+    if sc2_Estado==False and sc2_morir==False and canvas.coords(sc2)[2]<=80 and canvas.coords(sc2)[3]>360:
+        canvas.delete(sc2)
+        sc2=canvas.create_polygon(332,34,332,59,358,59,358,34,fill="peachpuff")
+    m.after(100,shellcreeper2) #Recursion
+    
 
 def Unflipped():
     global sc_Estado, sc, sc_morir
@@ -136,20 +163,23 @@ def Unflipped():
         sc_Estado=False
         
 
-
+"""Variables para movimiento de mario"""
 sal=False
 state=[0,0,0]
 y=canvas.coords(mario)[1]-120
 
-#scn=canvas.create_polygon(canvas.coords(sc)[0],canvas.coords(sc)[1],canvas.coords(sc)[2],canvas.coords(sc)[3],canvas.coords(sc)[4],canvas.coords(sc)[5],canvas.coords(sc)[6],canvas.coords(sc)[7],fill="yellow")
+
+
+
+"""saltos"""
 def salto():
     global sal, y, sc, sc_Estado
     #1mer piso
     x=canvas.find_overlapping(canvas.coords(sc)[0]+3, canvas.coords(sc)[1]+49, canvas.coords(sc)[4]+3, canvas.coords(sc)[5]+33)
     if sal==True and canvas.coords(mario)[1] >= y and ((canvas.coords(mario)[1]>366) or (canvas.coords(mario)[0]>180 and canvas.coords(mario)[6]<320)) and canvas.coords(mario)[1]>266:
         #Evalua si voltea algo
-
-        if len(x)>=1 and sc_Estado==False and not sc_morir:
+        #piso 2
+        if ((canvas.coords(sc)[0] >= 83 and canvas.coords(sc)[0] < 180 and canvas.coords(mario)[0]<180) or (canvas.coords(sc)[6]<=417 and canvas.coords(sc)[6]>320 and canvas.coords(mario)[6]>320)) and canvas.coords(mario)[1]>366 and  sc_Estado==False and sc_morir==False and len(x) >=1 and canvas.coords(sc)[3]==339:
             sc_Estado=True
             canvas.itemconfig(sc,fill='yellow')
             m.after(5000,Unflipped)
@@ -159,7 +189,8 @@ def salto():
     #2do piso medio
     elif sal==True and canvas.coords(mario)[1] >= y and canvas.coords(mario)[3] <=336 and canvas.coords(mario)[1]>166 and (canvas.coords(mario)[0]>60 and canvas.coords(mario)[6]<440)and((canvas.coords(mario)[1]>266) or ((canvas.coords(mario)[0]>60 and canvas.coords(mario)[6]<130)or(canvas.coords(mario)[0]>370 and canvas.coords(mario)[6]<440))):
         #Evalua si voltea algo
-        if len(x)>=1 and sc_Estado==False and not sc_morir:
+        #3er piso 
+        if len(x)>=1 and sc_Estado==False and sc_morir==False and canvas.coords(sc)[0]>=130 and canvas.coords(sc)[0]<=370 and canvas.coords(mario)[3]<=336 and canvas.coords(mario)[1]>=266 and canvas.coords(sc)[3]==239:
             sc_Estado=True
             canvas.itemconfig(sc,fill='yellow')
             m.after(5000,Unflipped)
@@ -168,18 +199,14 @@ def salto():
         m.after(10,salto())
     #2do piso lados
     elif sal==True and canvas.coords(mario)[1]>=y and canvas.coords(mario)[3] <=336 and canvas.coords(mario)[1]>276 and (canvas.coords(mario)[0]<60 or canvas.coords(mario)[6]>440):
-        #Evalua si voltea algo
-        if len(x)>=1 and sc_Estado==False and not sc_morir:
-            sc_Estado=True
-            canvas.itemconfig(sc,fill='yellow')
-            m.after(5000,Unflipped)
         canvas.move(mario,0,-5)
         canvas.update()
         m.after(10,salto())
     #3er piso
     elif sal==True and canvas.coords(mario)[1]>=y and canvas.coords(mario)[3]<=266 and ((canvas.coords(mario)[1]>166)or(canvas.coords(mario)[0]>194 and canvas.coords(mario)[6]<306)):
         #Evalua si voltea algo
-        if len(x)>=1 and sc_Estado==False and not sc_morir:
+        #4to piso
+        if ((canvas.coords(sc)[0] <= 194 and canvas.coords(mario)[0]<=194) or (canvas.coords(sc)[6]>=306 and canvas.coords(mario)[6]>=306)) and canvas.coords(mario)[3]<236 and canvas.coords(sc)[3]==139 and len(x)>=1 and sc_Estado==False and sc_morir==False:
             sc_Estado=True
             canvas.itemconfig(sc,fill='yellow')
             m.after(5000,Unflipped)
@@ -188,11 +215,6 @@ def salto():
         m.after(10,salto())
     #4to piso
     elif sal==True and canvas.coords(mario)[1] >= y and canvas.coords(mario)[3] <=136 and canvas.coords(mario)[1]>66:
-        #Evalua si voltea algo
-        if len(x)>=1 and sc_Estado==False and not sc_morir:
-            sc_Estado=True
-            canvas.itemconfig(sc,fill='yellow')
-            m.after(5000,Unflipped)
         canvas.move(mario,0,-5)
         canvas.update()
         m.after(10,salto())
@@ -372,7 +394,7 @@ def salto2():
         y=canvas.coords(mario)[1]-120
         
         
-        
+#Funcion para las caidas de mario       
 def freefall():
     global sal,y
     #caer desde el 2do piso
@@ -392,6 +414,7 @@ def freefall():
         m.after(10,freefall())
         
 
+"""Control de teclas y menu"""
 def pressed (event):
     global sal,state, y 
     tecla= repr (event.char)
@@ -434,40 +457,44 @@ def released(event):
 
 
 #Menu
-
-fondo= PhotoImage(file= "MARIOU.gif")
-fond= canvas.create_image(250,300,image=fondo)
-
-
-Tienemenu=False
-def tecla(event):
-    """
-    """
-    global Tienemenu, selector
-    teclaa=repr(event.char)
-    if (teclaa=="'x'" and Tienemenu== False):
-        Tienemenu= True
-        canvas.delete(fond,selector)
-        canvas.after(200,shellcreeper) #Esperar para ejecutar esta funcion
+canvas.after(200,shellcreeper) #Esperar para ejecutar esta funcion
+canvas.after(5000,shellcreeper2) #Esperar para ejecutar esta funcion
 
 
-canvas.bind('<x>',tecla)       
-        
-selector=canvas.create_rectangle(90,198,100,208, fill="blue")
 
-def arriba(event):
-    """
-    """
-    canvas.move(selector,0,-86)
-def abajo (event):
-    """
-    """
-    canvas.move(selector,0,86)
-
-
-canvas.bind('<Up>',arriba)
-canvas.bind('<Down>',abajo)
-        
+##fondo= PhotoImage(file= "MARIOU.gif")
+##fond= canvas.create_image(250,300,image=fondo)
+##
+##
+##Tienemenu=False
+##def tecla(event):
+##    """
+##    """
+##    global Tienemenu, selector
+##    teclaa=repr(event.char)
+##    if (teclaa=="'x'" and Tienemenu== False):
+##        Tienemenu= True
+##        canvas.delete(fond,selector)
+##        canvas.after(200,shellcreeper) #Esperar para ejecutar esta funcion
+##
+##
+##canvas.bind('<x>',tecla)       
+##        
+##selector=canvas.create_rectangle(90,198,100,208, fill="blue")
+##
+##def arriba(event):
+##    """
+##    """
+##    canvas.move(selector,0,-86)
+##def abajo (event):
+##    """
+##    """
+##    canvas.move(selector,0,86)
+##
+##
+##canvas.bind('<Up>',arriba)
+##canvas.bind('<Down>',abajo)
+##        
 
 
 for char in ["w","a","d"]:
